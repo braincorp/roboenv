@@ -53,6 +53,7 @@ def test_robustus():
     os.chdir(cwd)
     shutil.rmtree(test_env)
 
+
 if __name__ == '__main__':
     doctest.testmod(robustus)
     doctest.testmod(robustus.detail.utility)
