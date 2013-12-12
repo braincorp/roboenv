@@ -54,6 +54,7 @@ def install(robustus, requirement_specifier, rob_file, ignore_index):
                 # TODO: check that PYTHON_LIBRARY variable is set up correctly
                 subprocess.call(['cmake',
                                  '../',
+                                 '-DBUILD_opencv_legacy=NO',
                                  '-DPYTHON_EXECUTABLE=%s' % robustus.python_executable,
                                  '-DBUILD_NEW_PYTHON_SUPPORT=ON',
                                  '-DBUILD_TESTS=OFF',
