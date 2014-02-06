@@ -7,9 +7,7 @@ import logging
 import os
 from requirement import RequirementException
 import shutil
-import sys
-import importlib
-from utility import run_shell, add_source_ref, check_module_available
+from utility import run_shell
 
 
 def _make_overlay_folder(robustus, requirement_specifier):
@@ -97,14 +95,13 @@ def install(robustus, requirement_specifier, rob_file, ignore_index):
         cwd = os.getcwd()
         overlay_folder, build = _make_overlay_folder(robustus, requirement_specifier)
         os.chdir(overlay_folder)
-        overlay_install_folder = os.path.join(robustus.env, 'ros_installed_overlay_%s'
-                                              % requirement_specifier.version_hash())
+        rosdir = os.path.join(robustus.env, 'ros')
         env_source = os.path.join(robustus.env, 'bin/activate')
 
         if build:
             logging.info('Building ros overlay in %s with versions %s'
                          ' install folder %s' % (overlay_folder, str(packages),
-                                                 overlay_install_folder))
+                                                 rosdir))
 
             os.mkdir(os.path.join(overlay_folder, 'src'))
             _get_sources(packages)
@@ -114,14 +111,11 @@ def install(robustus, requirement_specifier, rob_file, ignore_index):
         opencv_cmake_dir = _opencv_cmake_path(robustus)
         ret_code = run_shell('. "%s" && export OpenCV_DIR="%s" && catkin_make_isolated'
                              ' --install-space %s --install' %
-                             (env_source, opencv_cmake_dir, overlay_install_folder) +
+                             (env_source, opencv_cmake_dir, rosdir) +
                              ' --force-cmake --cmake-args -DCATKIN_ENABLE_TESTING=1',
                              verbose=robustus.settings['verbosity'] >= 1)
         if ret_code != 0:
             raise RequirementException('Error during catkin_make')
-
-        add_source_ref(robustus, os.path.join(overlay_install_folder, 'setup.sh'))
-
     except:
         if robustus.settings['debug']:
             logging.info('Not removing folder %s due to debug flag.' % overlay_folder)
