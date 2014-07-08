@@ -179,13 +179,6 @@ class Robustus(object):
         with open(os.path.join(args.env, Robustus.settings_file_path), 'w') as file:
             file.write(str(settings))
 
-        # install robustus
-        cwd = os.getcwd()
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        setup_dir = os.path.abspath(os.path.join(script_dir, os.path.pardir))
-        os.chdir(setup_dir)
-        run_shell([python_executable, 'setup.py', 'install'], settings['verbosity'] >= 1)
-        os.chdir(cwd)
         logging.info('Robustus initialized environment with cache located at %s' % settings['cache'])
 
     def install_satisfactory_requirement_from_remote(self, requirement_specifier):
